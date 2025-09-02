@@ -34,7 +34,7 @@ mongoose.connect(MONGO_URI, {
   });
 
 // Routes
-const authRoutes = require("./routes/authRoutes");      // login/signup
+const authRoutes = require("./routes/auth");      // login/signup
 const studentRoutes = require("./routes/studentRoutes"); // students CRUD
 
 app.use("/api/auth", authRoutes);

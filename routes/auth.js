@@ -49,16 +49,8 @@ router.post("/signup", async (req, res) => {
 
     await newUser.save();
 
-    // 6. JWT qaytarish
-    const token = jwt.sign(
-      { id: newUser._id, role: newUser.role },
-      process.env.JWT_SECRET,
-      { expiresIn: "30d" }
-    );
-
     res.status(201).json({
       message: "Foydalanuvchi ro'yxatdan o'tdi",
-      token,
       user: {
         id: newUser._id,
         username: newUser.username,
@@ -97,16 +89,8 @@ router.post("/signin", async (req, res) => {
       return res.status(400).json({ message: "Parol noto'g'ri!" });
     }
 
-    // 4. JWT yaratish
-    const token = jwt.sign(
-      { id: user._id, role: user.role },
-      process.env.JWT_SECRET,
-      { expiresIn: "30d" }
-    );
-
     res.json({
       message: "Tizimga muvaffaqiyatli kirdingiz",
-      token,
       user: {
         id: user._id,
         username: user.username,
