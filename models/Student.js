@@ -33,7 +33,11 @@ const studentSchema = new mongoose.Schema({
   },
   freezeUntil: {
     type: String
-  }
+  },
+  payments: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Payment'
+  }]
 }, { timestamps: true });
 
 module.exports = mongoose.model("Student", studentSchema);

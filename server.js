@@ -37,10 +37,12 @@ mongoose.connect(MONGO_URI, {
 const authRoutes = require("./routes/auth");      // login/signup
 const studentRoutes = require("./routes/studentRoutes"); // students CRUD
 const groupRoutes = require("./routes/groupRoutes"); // groups CRUD
+const paymentRoutes = require("./routes/paymentRoutes"); // payments CRUD
 
 app.use("/api/auth", authRoutes);
 app.use("/api/students", studentRoutes);
 app.use("/api/groups", groupRoutes);
+app.use("/api/payments", paymentRoutes);
 
 // Test route
 app.get("/", (req, res) => {

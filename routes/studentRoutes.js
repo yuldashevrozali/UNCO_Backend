@@ -1,4 +1,5 @@
 const express = require("express");
+const mongoose = require("mongoose");
 const router = express.Router();
 const Student = require("../models/Student");
 
@@ -34,7 +35,7 @@ router.post("/", async (req, res) => {
 // 2. Barcha studentlarni olish
 router.get("/", async (req, res) => {
   try {
-    const students = await Student.find();
+    const students = await Student.find().populate('payments');
     res.json(students);
   } catch (error) {
     res.status(500).json({ message: "Xatolik yuz berdi", error: error.message });
@@ -44,7 +45,12 @@ router.get("/", async (req, res) => {
 // 3. Bitta studentni olish
 router.get("/:id", async (req, res) => {
   try {
-    const student = await Student.findOne({ id: req.params.id });
+    let student;
+    if (mongoose.Types.ObjectId.isValid(req.params.id)) {
+      student = await Student.findById(req.params.id).populate('payments');
+    } else {
+      student = await Student.findOne({ id: parseInt(req.params.id) }).populate('payments');
+    }
     if (!student) {
       return res.status(404).json({ message: "Student topilmadi!" });
     }
@@ -59,11 +65,20 @@ router.put("/:id", async (req, res) => {
   try {
     const { name, phone, group, teacher, isFrozen, freezeNote, freezeUntil } = req.body;
 
-    const updatedStudent = await Student.findOneAndUpdate(
-      { id: req.params.id },
-      { name, phone, group, teacher, isFrozen, freezeNote, freezeUntil },
-      { new: true, runValidators: true }
-    );
+    let updatedStudent;
+    if (mongoose.Types.ObjectId.isValid(req.params.id)) {
+      updatedStudent = await Student.findByIdAndUpdate(
+        req.params.id,
+        { name, phone, group, teacher, isFrozen, freezeNote, freezeUntil },
+        { new: true, runValidators: true }
+      );
+    } else {
+      updatedStudent = await Student.findOneAndUpdate(
+        { id: parseInt(req.params.id) },
+        { name, phone, group, teacher, isFrozen, freezeNote, freezeUntil },
+        { new: true, runValidators: true }
+      );
+    }
 
     if (!updatedStudent) {
       return res.status(404).json({ message: "Student topilmadi!" });
@@ -78,7 +93,12 @@ router.put("/:id", async (req, res) => {
 // 5. Studentni o'chirish
 router.delete("/:id", async (req, res) => {
   try {
-    const deletedStudent = await Student.findOneAndDelete({ id: req.params.id });
+    let deletedStudent;
+    if (mongoose.Types.ObjectId.isValid(req.params.id)) {
+      deletedStudent = await Student.findByIdAndDelete(req.params.id);
+    } else {
+      deletedStudent = await Student.findOneAndDelete({ id: parseInt(req.params.id) });
+    }
     if (!deletedStudent) {
       return res.status(404).json({ message: "Student topilmadi!" });
     }
