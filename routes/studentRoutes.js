@@ -1,60 +1,88 @@
 const express = require("express");
 const router = express.Router();
 const Student = require("../models/Student");
-const bcrypt = require("bcryptjs");
 
-// 1. Yangi student qo‘shish
-router.post("/register", async (req, res) => {
+// 1. Yangi student qo'shish
+router.post("/", async (req, res) => {
   try {
-    const { firstName, lastName, groupName, phone, password } = req.body;
+    const { id, name, phone, group, teacher } = req.body;
 
-    if (!firstName || !lastName || !groupName || !phone || !password) {
-      return res.status(400).json({ message: "Barcha maydonlarni to‘ldiring!" });
+    if (!id || !name || !phone || !group || !teacher) {
+      return res.status(400).json({ message: "Barcha maydonlarni to'ldiring!" });
     }
 
-    const existingStudent = await Student.findOne({ phone });
+    const existingStudent = await Student.findOne({ $or: [{ phone }, { id }] });
     if (existingStudent) {
-      return res.status(400).json({ message: "Bu telefon raqam avval ro‘yxatdan o‘tgan!" });
+      return res.status(400).json({ message: "Bu telefon raqam yoki ID avval ro'yxatdan o'tgan!" });
     }
 
-    const newStudent = new Student({ firstName, lastName, groupName, phone, password });
-    await newStudent.save();
+    const newStudent = new Student({
+      id,
+      name,
+      phone,
+      group,
+      teacher
+    });
 
-    res.status(201).json({ message: "Student muvaffaqiyatli qo‘shildi!", student: newStudent });
+    await newStudent.save();
+    res.status(201).json({ message: "Student muvaffaqiyatli qo'shildi!", student: newStudent });
   } catch (error) {
     res.status(500).json({ message: "Xatolik yuz berdi", error: error.message });
   }
 });
 
-// 2. Student login
-router.post("/login", async (req, res) => {
+// 2. Barcha studentlarni olish
+router.get("/", async (req, res) => {
   try {
-    const { phone, password } = req.body;
+    const students = await Student.find();
+    res.json(students);
+  } catch (error) {
+    res.status(500).json({ message: "Xatolik yuz berdi", error: error.message });
+  }
+});
 
-    const student = await Student.findOne({ phone });
+// 3. Bitta studentni olish
+router.get("/:id", async (req, res) => {
+  try {
+    const student = await Student.findOne({ id: req.params.id });
     if (!student) {
       return res.status(404).json({ message: "Student topilmadi!" });
     }
-
-    const isMatch = await bcrypt.compare(password, student.password);
-    if (!isMatch) {
-      return res.status(400).json({ message: "Parol noto‘g‘ri!" });
-    }
-
-    const studentData = student.toObject();
-    delete studentData.password;
-
-    res.json({ message: "Tizimga muvaffaqiyatli kirdingiz!", student: studentData });
+    res.json(student);
   } catch (error) {
     res.status(500).json({ message: "Xatolik yuz berdi", error: error.message });
   }
 });
 
-// 3. Barcha studentlarni olish
-router.get("/", async (req, res) => {
+// 4. Studentni yangilash
+router.put("/:id", async (req, res) => {
   try {
-    const students = await Student.find().select("-password");
-    res.json(students);
+    const { name, phone, group, teacher, isFrozen, freezeNote, freezeUntil } = req.body;
+
+    const updatedStudent = await Student.findOneAndUpdate(
+      { id: req.params.id },
+      { name, phone, group, teacher, isFrozen, freezeNote, freezeUntil },
+      { new: true, runValidators: true }
+    );
+
+    if (!updatedStudent) {
+      return res.status(404).json({ message: "Student topilmadi!" });
+    }
+
+    res.json({ message: "Student muvaffaqiyatli yangilandi!", student: updatedStudent });
+  } catch (error) {
+    res.status(500).json({ message: "Xatolik yuz berdi", error: error.message });
+  }
+});
+
+// 5. Studentni o'chirish
+router.delete("/:id", async (req, res) => {
+  try {
+    const deletedStudent = await Student.findOneAndDelete({ id: req.params.id });
+    if (!deletedStudent) {
+      return res.status(404).json({ message: "Student topilmadi!" });
+    }
+    res.json({ message: "Student muvaffaqiyatli o'chirildi!" });
   } catch (error) {
     res.status(500).json({ message: "Xatolik yuz berdi", error: error.message });
   }
