@@ -20,9 +20,20 @@ router.post("/", async (req, res) => {
       }
     }
 
+    let datesArray = [];
+
+    if (Array.isArray(date)) {
+      datesArray = date;
+    } else if (typeof date === 'string') {
+      // If comma-separated string, split it
+      datesArray = date.split(',').map(d => d.trim()).filter(d => d);
+    } else {
+      return res.status(400).json({ message: "Date noto'g'ri formatda!" });
+    }
+
     const newGroup = new Group({
       name,
-      date,
+      date: datesArray,
       time,
       students: students || []
     });
@@ -70,9 +81,26 @@ router.put("/:id", async (req, res) => {
       }
     }
 
+    let updateData = { name, time, students };
+
+    if (date !== undefined) {
+      let datesArray = [];
+
+      if (Array.isArray(date)) {
+        datesArray = date;
+      } else if (typeof date === 'string') {
+        // If comma-separated string, split it
+        datesArray = date.split(',').map(d => d.trim()).filter(d => d);
+      } else {
+        return res.status(400).json({ message: "Date noto'g'ri formatda!" });
+      }
+
+      updateData.date = datesArray;
+    }
+
     const updatedGroup = await Group.findByIdAndUpdate(
       req.params.id,
-      { name, date, time, students },
+      updateData,
       { new: true, runValidators: true }
     ).populate('students');
 

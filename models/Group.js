@@ -7,9 +7,15 @@ const groupSchema = new mongoose.Schema({
     trim: true
   },
   date: {
-    type: String,
+    type: [String],
     required: true,
-    enum: ["Dushanba", "Seshanba", "Chorshanba", "Payshanba", "Juma", "Shanba", "Yakshanba"]
+    validate: {
+      validator: function(dates) {
+        const validDates = ["Dushanba", "Seshanba", "Chorshanba", "Payshanba", "Juma", "Shanba"];
+        return dates.every(date => validDates.includes(date));
+      },
+      message: 'Date faqat hafta kunlaridan iborat bo\'lishi kerak!'
+    }
   },
   time: {
     type: String,
