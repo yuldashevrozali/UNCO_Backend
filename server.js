@@ -14,9 +14,10 @@ const MONGO_URI = process.env.MONGO_URI || "mongodb://127.0.0.1:27017/myapp";
 app.use(express.json());
 
 app.use(cors({
-  origin: ["http://localhost:3000", "https://unco-backend.onrender.com"], // frontend URL lar
-  methods: ["GET", "POST", "PUT", "DELETE"], // ruxsat etilgan metodlar
-  credentials: true
+  origin: ["http://localhost:3000", "http://localhost:3001", "https://unco-backend.onrender.com"], // frontend URL lar
+  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"], // ruxsat etilgan metodlar
+  credentials: true,
+  allowedHeaders: ["Content-Type", "Authorization"]
 }));
 
 
@@ -41,6 +42,7 @@ const paymentRoutes = require("./routes/paymentRoutes"); // payments CRUD
 const teacherRoutes = require("./routes/teacherRoutes"); // teachers CRUD
 const scheduleRoutes = require("./routes/scheduleRoutes"); // schedules CRUD
 const attendanceRoutes = require("./routes/attendanceRoutes"); // attendance CRUD
+const leadRoutes = require("./routes/leadRoutes"); // leads CRUD
 
 app.use("/api/auth", authRoutes);
 app.use("/api/students", studentRoutes);
@@ -49,6 +51,7 @@ app.use("/api/payments", paymentRoutes);
 app.use("/api/teachers", teacherRoutes);
 app.use("/api/schedules", scheduleRoutes);
 app.use("/api/attendance", attendanceRoutes);
+app.use("/api/leads", leadRoutes);
 
 // Test route
 app.get("/", (req, res) => {
