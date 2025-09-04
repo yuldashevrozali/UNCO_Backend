@@ -38,11 +38,17 @@ const authRoutes = require("./routes/auth");      // login/signup
 const studentRoutes = require("./routes/studentRoutes"); // students CRUD
 const groupRoutes = require("./routes/groupRoutes"); // groups CRUD
 const paymentRoutes = require("./routes/paymentRoutes"); // payments CRUD
+const teacherRoutes = require("./routes/teacherRoutes"); // teachers CRUD
+const scheduleRoutes = require("./routes/scheduleRoutes"); // schedules CRUD
+const attendanceRoutes = require("./routes/attendanceRoutes"); // attendance CRUD
 
 app.use("/api/auth", authRoutes);
 app.use("/api/students", studentRoutes);
 app.use("/api/groups", groupRoutes);
 app.use("/api/payments", paymentRoutes);
+app.use("/api/teachers", teacherRoutes);
+app.use("/api/schedules", scheduleRoutes);
+app.use("/api/attendance", attendanceRoutes);
 
 // Test route
 app.get("/", (req, res) => {
