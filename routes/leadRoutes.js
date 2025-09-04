@@ -8,7 +8,7 @@ router.get("/", async (req, res) => {
     const leads = await Lead.find().populate('assignedTo');
     res.json(leads);
   } catch (error) {
-    res.status(500).json({ message: "Xatolik yuz berdi", error: error.message });
+    res.status(500).json({ message: "Xatolik yuz berdi garang xatolarni tog'rla ko'rvachcha gandon", error: error.message });
   }
 });
 
@@ -28,20 +28,14 @@ router.get("/:id", async (req, res) => {
 // 3. Yangi lead qo'shish
 router.post("/", async (req, res) => {
   try {
-    const { name, email, phone, status, source, notes, assignedTo } = req.body;
+    const { name, phone, status, source, notes, assignedTo } = req.body;
 
-    if (!name || !email || !phone || !source) {
-      return res.status(400).json({ message: "Name, email, phone va source majburiy!" });
-    }
-
-    const existingLead = await Lead.findOne({ email });
-    if (existingLead) {
-      return res.status(400).json({ message: "Bu email avval ro'yxatdan o'tgan!" });
+    if (!name || !phone || !source) {
+      return res.status(400).json({ message: "Name, phone va source majburiy!" });
     }
 
     const newLead = new Lead({
       name,
-      email,
       phone,
       status: status || 'new',
       source,
@@ -60,11 +54,11 @@ router.post("/", async (req, res) => {
 // 4. Leadni yangilash
 router.put("/:id", async (req, res) => {
   try {
-    const { name, email, phone, status, source, notes, assignedTo } = req.body;
+    const { name, phone, status, source, notes, assignedTo } = req.body;
 
     const updatedLead = await Lead.findByIdAndUpdate(
       req.params.id,
-      { name, email, phone, status, source, notes, assignedTo },
+      { name, phone, status, source, notes, assignedTo },
       { new: true, runValidators: true }
     ).populate('assignedTo');
 

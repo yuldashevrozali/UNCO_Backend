@@ -6,13 +6,6 @@ const leadSchema = new mongoose.Schema({
     required: true,
     trim: true
   },
-  email: {
-    type: String,
-    required: true,
-    unique: true,
-    trim: true,
-    lowercase: true
-  },
   phone: {
     type: String,
     required: true,
@@ -20,7 +13,6 @@ const leadSchema = new mongoose.Schema({
   },
   status: {
     type: String,
-    required: true,
     enum: ['new', 'contacted', 'qualified', 'converted', 'lost'],
     default: 'new'
   },
