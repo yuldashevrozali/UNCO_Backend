@@ -6,10 +6,10 @@ const Student = require("../models/Student");
 // 1. Yangi group qo'shish
 router.post("/", async (req, res) => {
   try {
-    const { name, date, time, students } = req.body;
+    const { name, date, time, teacher, students } = req.body;
 
-    if (!name || !date || !time) {
-      return res.status(400).json({ message: "Name, date va time majburiy!" });
+    if (!name || !date || !time || !teacher) {
+      return res.status(400).json({ message: "Name, date, time va teacher majburiy!" });
     }
 
     // Students mavjudligini tekshirish (agar berilgan bo'lsa)
@@ -35,6 +35,7 @@ router.post("/", async (req, res) => {
       name,
       date: datesArray,
       time,
+      teacher,
       students: students || []
     });
 
@@ -71,7 +72,7 @@ router.get("/:id", async (req, res) => {
 // 4. Groupni yangilash
 router.put("/:id", async (req, res) => {
   try {
-    const { name, date, time, students } = req.body;
+    const { name, date, time, teacher, students } = req.body;
 
     // Students mavjudligini tekshirish (agar berilgan bo'lsa)
     if (students && students.length > 0) {
@@ -81,7 +82,7 @@ router.put("/:id", async (req, res) => {
       }
     }
 
-    let updateData = { name, time, students };
+    let updateData = { name, time, teacher, students };
 
     if (date !== undefined) {
       let datesArray = [];

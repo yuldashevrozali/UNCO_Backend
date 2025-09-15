@@ -21,6 +21,11 @@ const groupSchema = new mongoose.Schema({
     type: String,
     required: true
   },
+  teacher: {
+    type: String,
+    required: true,
+    trim: true
+  },
   students: [{
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Student'
