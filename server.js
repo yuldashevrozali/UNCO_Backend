@@ -14,7 +14,7 @@ const MONGO_URI = process.env.MONGO_URI || "mongodb://127.0.0.1:27017/myapp";
 app.use(express.json());
 
 app.use(cors({
-  origin: ["http://localhost:3000", "http://localhost:3001", "https://unco-backend.onrender.com"], // frontend URL lar
+  origin: ["http://localhost:3000", "http://localhost:3001", "https://unco-backend.onrender.com","https://unco-crm-we8v.vercel.app"], // frontend URL lar
   methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"], // ruxsat etilgan metodlar
   credentials: true,
   allowedHeaders: ["Content-Type", "Authorization"]
